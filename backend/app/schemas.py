@@ -2,14 +2,21 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class ItemResponse(BaseModel):
-    id: int
+class ItemBase(BaseModel):
     name: str
     description: str
     price: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class ItemCreate(ItemBase):
+    pass
+
+
+class ItemResponse(ItemBase):
+    id: int
 
 
 class PurchaseResponse(BaseModel):
@@ -20,4 +27,4 @@ class PurchaseResponse(BaseModel):
     order_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

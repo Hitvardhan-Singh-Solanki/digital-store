@@ -16,5 +16,5 @@ class Purchase(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now())
     order_id = Column(String, unique=True)

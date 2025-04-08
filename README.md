@@ -95,3 +95,14 @@ digital-store/
 The project as presented has been tested. Part of the evaluation involves being able to efficiently resolve potential errors or omissions, and keep a record of your decision making process.
 
 Good luck! We’re excited to see your solution.
+
+
+build and run the app 
+cd ./frontend 
+nvm use 20
+npm install
+cd ..
+docker-compose up --build
+
+Create Sample items script
+docker-compose exec backend python app/scripts/create_example_items.py

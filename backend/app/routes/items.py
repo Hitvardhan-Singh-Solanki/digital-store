@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import json
 from models import Item
-from schemas import ItemResponse
+from schemas import ItemResponse, ItemCreate
 from database import get_db, redis_client
 
 router = APIRouter(prefix="/api/items", tags=["items"])
@@ -21,3 +21,15 @@ async def get_items(db: Session = Depends(get_db)):
     redis_client.setex("items", 300, json.dumps(cache_data))
 
     return items
+
+
+@router.post("/", response_model=ItemResponse)
+async def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+    db_item = Item(**item.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+
+    redis_client.delete("items")
+
+    return db_item

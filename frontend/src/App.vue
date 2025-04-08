@@ -36,8 +36,8 @@ const purchases = ref([]);
 
 onMounted(async () => {
   const [itemsRes, purchasesRes] = await Promise.all([
-    fetch("/api/items"),
-    fetch("/api/purchases"),
+    fetch("http://localhost:8000/api/items"),
+    fetch("http://localhost:8000/api/purchases"),
   ]);
 
   items.value = await itemsRes.json();

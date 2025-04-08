@@ -1,0 +1,41 @@
+# Node (frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python (backend)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+env/
+venv/
+backend/.env
+backend/.pytest_cache/
+backend/.mypy_cache/
+
+# Docker
+*.log
+*.pid
+*.seed
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# General
+.env
+.env.*
+*.swp
+*.bak
+
+# Generated Scripts
+scripts/*.pyc
+scripts/__pycache__/
+

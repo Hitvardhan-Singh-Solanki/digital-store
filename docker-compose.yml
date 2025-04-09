@@ -45,5 +45,19 @@ services:
       - CHOKIDAR_USEPOLLING=true
     command: npm run dev
 
+  tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+    command: pytest -v
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite:///./test.db
+      - REDIS_URL=redis://redis:6379
+      - XSOLLA_WEBHOOK_SECRET=somesecret
+    depends_on:
+      - postgres
+      - redis
+
 volumes:
   postgres_data:

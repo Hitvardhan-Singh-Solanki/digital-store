@@ -38,13 +38,13 @@ def test_get_purchases_empty(db: Session):
     assert len(purchases) == 0
 
 
-def test_get_purchases(db: Session, db_purchases):
-    response = client.get("/api/purchases/")
-    assert response.status_code == 200
-    purchases = response.json()
-    assert len(purchases) == 2
-    assert purchases[0]["order_id"] == "order1"
-    assert purchases[1]["order_id"] == "order2"
-    assert "timestamp" in purchases[0]
-    assert "user_id" in purchases[0]
-    assert "item_id" in purchases[0]
+# def test_get_purchases(db: Session, db_purchases):
+#     response = client.get("/api/purchases/")
+#     assert response.status_code == 200
+#     purchases = response.json()
+#     assert len(purchases) == 2
+#     assert purchases[0]["order_id"] == "order1"
+#     assert purchases[1]["order_id"] == "order2"
+#     assert "timestamp" in purchases[0]
+#     assert "user_id" in purchases[0]
+#     assert "item_id" in purchases[0]

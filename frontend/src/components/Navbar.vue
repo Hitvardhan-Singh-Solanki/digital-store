@@ -11,34 +11,13 @@
                 <li>
                     <router-link to="/items" class="text-white hover:underline">Items</router-link>
                 </li>
+                <li>
+                    <router-link to="/purchases" class="text-white hover:underline">Purchases</router-link>
+                </li>
             </ul>
         </div>
     </nav>
 </template>
-
-<style scoped>
-.navbar {
-    background-color: #333;
-    padding: 1rem;
-}
-
-.navbar-list {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-}
-
-.navbar-link {
-    color: white;
-    text-decoration: none;
-}
-
-.navbar-link:hover {
-    text-decoration: underline;
-}
-</style>
 
 <script lang="ts">
 

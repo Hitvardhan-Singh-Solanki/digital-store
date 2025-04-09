@@ -46,3 +46,7 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class UserDeleteRequest(BaseModel):
+    password: str

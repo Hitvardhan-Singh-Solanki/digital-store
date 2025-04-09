@@ -15,6 +15,7 @@ const routes = [
     name: "purchases",
     component: Purchases,
   },
+  { path: "/:pathMatch(.*)*", redirect: "/users" },
 ];
 
 const router = createRouter({

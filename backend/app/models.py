@@ -1,5 +1,13 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Float,
+    DateTime,
+    ForeignKey,
+)
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 import uuid
 from datetime import datetime
 from database import Base
@@ -21,6 +29,8 @@ class Purchase(Base):
     timestamp = Column(DateTime, default=datetime.now())
     order_id = Column(String, unique=True, default=lambda: str(uuid.uuid4()))
 
+    user = relationship("User", back_populates="purchases")
+
 
 """
 No Security mechanism whatsoever, this is just a demo
@@ -34,3 +44,7 @@ class User(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+
+    purchases = relationship(
+        "Purchase", back_populates="user", cascade="all, delete-orphan"
+    )

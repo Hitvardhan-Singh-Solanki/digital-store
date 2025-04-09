@@ -12,6 +12,9 @@
             </button>
         </div>
 
+        <div v-if="isLoading" class="text-center">Loading users...</div>
+        <UserList v-else :users="users" @deleteUser="openDeleteModal" />
+
         <div v-if="showCreateUserForm" class="mb-4 p-4 border border-gray-300 rounded">
             <h2 class="text-lg font-bold mb-2">Create User</h2>
             <form @submit.prevent="createUser">
@@ -34,27 +37,26 @@
             </form>
         </div>
 
-        <table class="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="border border-gray-300 px-4 py-2 text-left">Username</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50">
-                    <td class="border border-gray-300 px-4 py-2">{{ user.username }}</td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Login</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <h2 class="text-lg font-bold mb-4">Confirm Deletion</h2>
+                <p class="mb-4">Enter your password to confirm deletion:</p>
+                <input v-model="deletePassword" type="password" placeholder="Password"
+                    class="w-full border border-gray-300 rounded px-2 py-1 mb-4" />
+                <div class="flex justific-end gap-2">
+                    <button @click="closeDeleteModal"
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                    <button @click="confirmDelete"
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import UserList from "../components/UserList.vue";
 
 interface User {
     id: string,
@@ -62,11 +64,24 @@ interface User {
 }
 
 const users = ref<User[]>([]);
+const isLoading = ref(true);
+const showDeleteModal = ref(false);
+const deleteUserId = ref<string | null>(null);
+const deletePassword = ref("");
 
 onMounted(async () => {
-    const usersRes = await fetch('http://localhost:8000/api/users');
-
-    users.value = await usersRes.json();
+    try {
+        const usersRes = await fetch('http://localhost:8000/api/users');
+        if (!usersRes.ok) {
+            throw new Error(`HTTP error! status: ${usersRes.status}`);
+        }
+        const data = await usersRes.json();
+        users.value = data;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    } finally {
+        isLoading.value = false;
+    }
 });
 
 const showCreateUserForm = ref(false);
@@ -90,6 +105,40 @@ const createUser = async () => {
         showCreateUserForm.value = false;
     } catch (error) {
         console.error(error);
+    }
+};
+
+const openDeleteModal = (userId: string) => {
+    deleteUserId.value = userId;
+    deletePassword.value = "";
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    deleteUserId.value = null;
+    deletePassword.value = "";
+};
+
+const confirmDelete = async () => {
+    if (!deleteUserId.value || !deletePassword.value) return;
+
+    try {
+        const response = await fetch(`http://localhost:8000/api/users/${deleteUserId.value}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: deletePassword.value }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete user");
+        }
+
+        users.value = users.value.filter((user) => user.id !== deleteUserId.value);
+        closeDeleteModal();
+    } catch (error) {
+        console.error(error);
+        alert("Failed to delete user. Please check your password.");
     }
 };
 </script>

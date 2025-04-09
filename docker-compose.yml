@@ -1,49 +1,45 @@
 version: '3.8'
 
+name: digital-store
+
+x-common: &common
+  env_file:
+    - ./backend/.env
+
 services:
-  postgres:
-    image: "postgres:15-alpine"
-    env_file:
-      - ./backend/.env
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-  
   redis:
-    image: "redis:alpine"
-    ports:
-      - "6379:6379"
+    extends:
+      file: docker-compose.base.yml
+      service: redis
+
+  postgres:
+    extends:
+      file: docker-compose.base.yml
+      service: postgres
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./backend/.env
-    volumes:
-      - ./backend/app:/app
+    extends:
+      file: ./backend/docker-compose.yml
+      service: backend
+    <<: *common
     depends_on:
       - redis
       - postgres
+    networks:
+      - backend-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
+    extends:
+      file: ./frontend/docker-compose.yml
+      service: frontend
     depends_on:
       - backend
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/package.json:/app/package.json
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    command: npm run dev
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    name: backend-network
 
 volumes:
   postgres_data:

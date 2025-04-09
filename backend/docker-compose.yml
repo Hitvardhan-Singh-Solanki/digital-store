@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  redis:
+    extends:
+      file: ../docker-compose.base.yml
+      service: redis
+
+  postgres:
+    extends:
+      file: ../docker-compose.base.yml
+      service: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    name: backend-network
+
+volumes:
+  postgres_data:

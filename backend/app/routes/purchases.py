@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from models import Purchase, Item, User
+import uuid
+from models import Purchase, Item, User, PendingPurchase
 from schemas import PurchaseResponse, PurchaseCreate
 from database import get_db
 
@@ -39,15 +40,16 @@ async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    new_purchase = Purchase(item_id=purchase.item_id, user_id=purchase.user_id)
-    db.add(new_purchase)
+    pending_purchase = PendingPurchase(
+        item_id=purchase.item_id, user_id=purchase.user_id, order_id=str(uuid.uuid4())
+    )
+    db.add(pending_purchase)
     db.commit()
-    db.refresh(new_purchase)
 
     return {
-        "id": new_purchase.id,
-        "user_id": new_purchase.user_id,
+        "id": 0,  # Temporary ID until webhook confirms
+        "user_id": pending_purchase.user_id,
         "item": item,
-        "timestamp": new_purchase.timestamp,
-        "order_id": new_purchase.order_id,
+        "timestamp": pending_purchase.timestamp,
+        "order_id": pending_purchase.order_id,
     }

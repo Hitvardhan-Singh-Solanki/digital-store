@@ -5,10 +5,16 @@ import hmac
 import hashlib
 import os
 
-from models import Purchase
+from models import Purchase, Item, PendingPurchase
 from database import get_db
+from state import connected_clients
 
 router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])
+
+
+def verify_signature(body: bytes, signature: str, secret: str) -> bool:
+    computed = hmac.new(secret.encode(), body, hashlib.sha1).hexdigest()
+    return hmac.compare_digest(computed, signature)
 
 
 @router.post("/payment")
@@ -19,26 +25,70 @@ async def payment_webhook(
 ):
     body = await request.body()
 
-    secret = os.getenv("XSOLLA_WEBHOOK_SECRET").encode()
-    expected_signature = hmac.new(secret, body, hashlib.sha1).hexdigest()
+    # Extract signature from Authorization header
+    if not authorization or not authorization.startswith("Signature "):
+        raise HTTPException(status_code=401, detail="Missing signature")
 
-    if authorization != f"Signature {expected_signature}":
+    signature = authorization.split(" ")[1]
+    secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
+
+    # Verify signature
+    if not verify_signature(body, signature, secret):
         raise HTTPException(status_code=401, detail="Invalid signature")
 
-    data = json.loads(body)
-    order_id = data.get("notification_type")
-    user_id = data.get("user", {}).get("id")
-    item_id = data.get("purchase", {}).get("virtual_item", {}).get("sku")
+    # Parse and validate payload
+    try:
+        data = json.loads(body)
+        if data.get("notification_type") != "payment":
+            raise HTTPException(status_code=400, detail="Invalid notification type")
 
-    if not all([order_id, user_id, item_id]):
-        raise HTTPException(status_code=400, detail="Missing required fields")
+        user_id = data.get("user", {}).get("id")
+        items = data.get("purchase", {}).get("virtual_items", {}).get("items", [])
 
-    existing_purchase = db.query(Purchase).filter_by(order_id=order_id).first()
-    if existing_purchase:
-        raise HTTPException(status_code=409, detail="Duplicate order")
+        if not user_id or not items:
+            raise HTTPException(status_code=400, detail="Missing required fields")
 
-    purchase = Purchase(user_id=user_id, item_id=item_id, order_id=order_id)
-    db.add(purchase)
-    db.commit()
+        for item_data in items:
+            sku = item_data.get("sku")
+            order_id = f"xsolla_{data.get('notification_type')}_{user_id}_{sku}"
 
-    return {"status": "success"}
+            if db.query(Purchase).filter(Purchase.order_id == order_id).first():
+                continue
+
+            pending = (
+                db.query(PendingPurchase)
+                .filter(
+                    PendingPurchase.user_id == user_id, PendingPurchase.item_id == sku
+                )
+                .first()
+            )
+
+            if not pending:
+                continue
+
+            purchase = Purchase(user_id=user_id, item_id=sku, order_id=order_id)
+            db.add(purchase)
+            db.delete(pending)
+
+        db.commit()
+
+        notification = {
+            "type": "purchase_success",
+            "user_id": user_id,
+            "items": [
+                {"id": item["sku"], "name": db.query(Item).get(item["sku"]).name}
+                for item in items
+                if db.query(Item).get(item["sku"])
+            ],
+        }
+
+        for client in connected_clients:
+            try:
+                await client.send_json(notification)
+            except:
+                connected_clients.remove(client)
+
+        return {"status": "success"}
+
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")

@@ -9,8 +9,4 @@ COPY app ./
 
 RUN pip install pytest pytest-asyncio httpx
 
-COPY setup_test_db.sh ./
-
-RUN chmod +x setup_test_db.sh
-
-CMD ["./setup_test_db.sh"]
+CMD ["pytest", "-v"]

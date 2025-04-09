@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 from models import Base
 from routes import items, purchases, webhooks, users
+from state import connected_clients
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -17,6 +18,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    connected_clients.add(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except:
+        connected_clients.remove(websocket)
+
 
 # Include routers
 app.include_router(items.router)

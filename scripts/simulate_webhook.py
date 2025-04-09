@@ -1,61 +1,55 @@
+import requests
 import hmac
 import hashlib
-import requests
 import json
 import os
-import uuid
+from time import sleep
 
 
-def generate_signature(payload: dict, secret: str) -> str:
-    body = json.dumps(payload)
-    return hmac.new(secret.encode(), body.encode(), hashlib.sha1).hexdigest()
-
-
-def send_webhook(url: str, payload: dict, secret: str) -> None:
-    # Generate signature
-    body = json.dumps(payload)
-    signature = generate_signature(payload, secret)
-
-    # Prepare headers with signature
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Signature {signature}",
-    }
-
-    # Send request
-    response = requests.post(url, headers=headers, data=body)
-    print(f"Status: {response.status_code}")
-    print(f"Response: {response.text}")
-
-
-if __name__ == "__main__":
-    # Configuration
-    webhook_url = "http://localhost:8000/api/webhooks/payment"
-    webhook_secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
-
-    # Example Xsolla webhook payload
+def simulate_webhook(user_id, item_id):
+    # Webhook payload
     payload = {
         "notification_type": "payment",
-        "user": {"id": "user123", "name": {"value": "John Doe"}},
+        "user": {"id": user_id},
         "purchase": {
             "virtual_items": {
                 "items": [
                     {
-                        "sku": "1",  # Must match an existing item ID in your database
+                        "sku": item_id,
                         "amount": 1,
                     }
                 ]
             }
         },
-        "transaction": {
-            "id": str(uuid.uuid4()),
-            "payment_date": "2024-02-20T12:00:00Z",
-        },
-        "payment_details": {
-            "payment_method": "credit_card",
-            "amount": "9.99",
-            "currency": "USD",
-        },
     }
 
-    send_webhook(webhook_url, payload, webhook_secret)
+    # Convert payload to JSON string
+    body = json.dumps(payload).encode()
+
+    # Calculate signature
+    secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
+    signature = hmac.new(secret.encode(), body, hashlib.sha1).hexdigest()
+
+    # Send webhook request
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Signature {signature}",
+    }
+
+    # Use backend service name instead of localhost
+    response = requests.post(
+        "http://backend:8000/api/webhooks/payment", data=body, headers=headers
+    )
+
+    print(f"Webhook response: {response.status_code}")
+    print(response.json())
+
+
+if __name__ == "__main__":
+    print("Starting webhook simulator...")
+    while True:
+        try:
+            simulate_webhook("0a948c0e-b786-423c-915e-c21a29539dc6", "6")
+        except Exception as e:
+            print(f"Error sending webhook: {e}")
+        sleep(3)

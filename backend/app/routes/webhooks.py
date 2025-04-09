@@ -7,7 +7,7 @@ import os
 
 from models import Purchase, Item, PendingPurchase
 from database import get_db
-from main import connected_clients
+from state import connected_clients
 
 router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])
 
@@ -48,16 +48,13 @@ async def payment_webhook(
         if not user_id or not items:
             raise HTTPException(status_code=400, detail="Missing required fields")
 
-        # Process each item in the purchase
         for item_data in items:
             sku = item_data.get("sku")
             order_id = f"xsolla_{data.get('notification_type')}_{user_id}_{sku}"
 
-            # Check if this purchase is already confirmed
             if db.query(Purchase).filter(Purchase.order_id == order_id).first():
                 continue
 
-            # Look for pending purchase
             pending = (
                 db.query(PendingPurchase)
                 .filter(
@@ -69,14 +66,12 @@ async def payment_webhook(
             if not pending:
                 continue
 
-            # Create confirmed purchase
             purchase = Purchase(user_id=user_id, item_id=sku, order_id=order_id)
             db.add(purchase)
-            db.delete(pending)  # Remove pending purchase
+            db.delete(pending)
 
         db.commit()
 
-        # Send notification
         notification = {
             "type": "purchase_success",
             "user_id": user_id,

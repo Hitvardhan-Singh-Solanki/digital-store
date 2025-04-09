@@ -40,7 +40,6 @@ async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Create a pending purchase record
     pending_purchase = PendingPurchase(
         item_id=purchase.item_id, user_id=purchase.user_id, order_id=str(uuid.uuid4())
     )

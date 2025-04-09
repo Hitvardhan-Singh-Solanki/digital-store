@@ -45,16 +45,5 @@ services:
       - CHOKIDAR_USEPOLLING=true
     command: npm run dev
 
-  tests-backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.test
-    command: pytest
-    env_file:
-      - ./backend/.env.test 
-    depends_on:
-      - postgres
-      - redis
-
 volumes:
   postgres_data:

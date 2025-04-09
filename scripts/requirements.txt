@@ -1,2 +1,2 @@
-// filepath: /Users/hitvardhan/dev/tht-fullstack-main/digital-store/scripts/requirements.txt
 requests==2.32.3
+python-dotenv>=1.0.0

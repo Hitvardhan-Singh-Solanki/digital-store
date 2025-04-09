@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 from models import Base
 from routes import items, purchases, webhooks, users
+from state import connected_clients
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -18,9 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add after creating the FastAPI app
-connected_clients = set()
-
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -28,7 +26,6 @@ async def websocket_endpoint(websocket: WebSocket):
     connected_clients.add(websocket)
     try:
         while True:
-            # Keep the connection alive
             await websocket.receive_text()
     except:
         connected_clients.remove(websocket)

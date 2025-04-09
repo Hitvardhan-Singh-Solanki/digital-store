@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  webhook-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - digital-store-network
+
+networks:
+  digital-store-network:
+    external: true
+    name: digital-store_default

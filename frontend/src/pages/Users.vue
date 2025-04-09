@@ -12,7 +12,7 @@
             </button>
         </div>
 
-        <UserList v-if="!isLoading" :users="users" @deleteUser="openDeleteModal" />
+        <UserList v-if="!isLoading" :users="users" @deleteUser="openDeleteModal" @loginUser="showLoginModal = true" />
 
         <!-- Create User Modal -->
         <div v-if="showCreateUserModal"
@@ -55,12 +55,38 @@
                 </div>
             </div>
         </div>
+
+
+        <div v-if="showLoginModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <h2 class="text-lg font-bold mb-4">Login</h2>
+                <form @submit.prevent="loginUser">
+                    <div class="mb-2">
+                        <label for="login-username" class="block text-sm font-medium">Username</label>
+                        <input v-model="loginData.username" id="login-username" type="text"
+                            class="w-full border border-gray-300 rounded px-2 py-1" required />
+                    </div>
+                    <div class="mb-2">
+                        <label for="login-password" class="block text-sm font-medium">Password</label>
+                        <input v-model="loginData.password" id="login-password" type="password"
+                            class="w-full border border-gray-300 rounded px-2 py-1" required />
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" @click="closeLoginModal"
+                            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                        <button type="submit"
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import UserList from "../components/UserList.vue";
+import { login } from "../auth";
 
 interface User {
     id: string;
@@ -70,10 +96,12 @@ interface User {
 const users = ref<User[]>([]);
 const isLoading = ref(true);
 const showCreateUserModal = ref(false);
+const showLoginModal = ref(false);
 const showDeleteModal = ref(false);
 const deleteUserId = ref<string | null>(null);
 const deletePassword = ref("");
 const newUser = ref({ username: "", password: "" });
+const loginData = ref({ username: "", password: "" });
 
 onMounted(async () => {
     try {
@@ -128,6 +156,13 @@ const closeCreateUserModal = () => {
     newUser.value = { username: "", password: "" };
 };
 
+
+const closeLoginModal = () => {
+    showLoginModal.value = false;
+    loginData.value = { username: "", password: "" };
+};
+
+
 const confirmDelete = async () => {
     if (!deleteUserId.value || !deletePassword.value) return;
 
@@ -147,6 +182,28 @@ const confirmDelete = async () => {
     } catch (error) {
         console.error(error);
         alert("Failed to delete user. Please check your password.");
+    }
+};
+
+const loginUser = async () => {
+    try {
+        const response = await fetch("http://localhost:8000/api/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(loginData.value).toString(),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to log in");
+        }
+
+        const data = await response.json();
+        console.log("Login successful:", data);
+        login(data.user_id, loginData.value.username);
+        closeLoginModal();
+    } catch (error) {
+        console.error(error);
+        alert("Failed to log in. Please check your credentials.");
     }
 };
 </script>

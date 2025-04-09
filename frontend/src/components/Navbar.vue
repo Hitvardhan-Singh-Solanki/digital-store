@@ -1,16 +1,18 @@
 <template>
-    <nav class="bg-gray-800 p-4 flex">
-        <div class="flex-grow">
-            <router-link to="/" class="text-white hover:underline"><Header/></router-link>
+    <nav class="bg-gray-800 p-4">
+        <div class="max-w-7xl mx-auto flex">
+            <div class="flex-grow">
+                <Header />
+            </div>
+            <ul class="flex space-x-4 flex-end">
+                <li>
+                    <router-link to="/users" class="text-white hover:underline">Users</router-link>
+                </li>
+                <li>
+                    <router-link to="/items" class="text-white hover:underline">Items</router-link>
+                </li>
+            </ul>
         </div>
-        <ul class="flex space-x-4 flex-end">
-            <li>
-            <router-link to="/purchases" class="text-white hover:underline">Purchases</router-link>
-            </li>
-            <li>
-            <router-link to="/cart" class="text-white hover:underline">Cart</router-link>
-            </li>
-        </ul>
     </nav>
 </template>
 
@@ -28,9 +30,6 @@
     padding: 0;
 }
 
-.navbar-item {
-}
-
 .navbar-link {
     color: white;
     text-decoration: none;
@@ -46,9 +45,9 @@
 import Header from './Header.vue'
 
 export default {
-  name: 'Navbar',
-  components: {
-    Header,
-  },
+    name: 'Navbar',
+    components: {
+        Header,
+    },
 };
 </script>

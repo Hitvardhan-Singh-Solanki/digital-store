@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ItemsList from "./components/ItemsList.vue";
-import PurchasesList from "./components/PurchasesList.vue";
+import Users from "./pages/Users.vue";
+import Items from "./pages/Items.vue";
 
 const routes = [
-  { path: "/", name: "home", component: ItemsList },
-  { path: "/purchases", name: "purchases", component: PurchasesList },
+  { path: "/users", name: "users", component: Users },
+  {
+    path: "/items",
+    name: "items",
+    component: Items,
+  },
 ];
 
 const router = createRouter({

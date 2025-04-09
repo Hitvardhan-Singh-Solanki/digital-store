@@ -1,19 +1,12 @@
 <template>
-  <div class="group relative overflow-hidden rounded-lg border bg-white dark:bg-primary-900 dark:border-primary-700 p-4 transition-all hover:shadow-md">
-    <div class="flex h-full flex-col justify-between space-y-4">
-      <div>
-        <h3 class="text-lg font-semibold text-primary-800 dark:text-primary-100">{{ item.name }}</h3>
-        <p class="mt-2 text-sm text-primary-600 dark:text-primary-300">{{ item.description }}</p>
-      </div>
-      <div class="flex items-center justify-between">
-        <span class="rounded-full bg-accent-50 dark:bg-accent-900 px-3 py-1 text-sm font-medium text-accent-700 dark:text-accent-100">
-          {{ item.price }} coins
-        </span>
-        <button @click="$emit('purchase')" class="rounded-md bg-primary-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600">
-          Purchase
-        </button>
-      </div>
-    </div>
+  <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ item.name }}</h2>
+    <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ item.description }}</p>
+    <p class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-4">${{ item.price }}</p>
+    <button @click="handlePurchase(item)"
+      class="mt-4 w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+      Buy Now
+    </button>
   </div>
 </template>
 
@@ -32,4 +25,8 @@ defineProps<{
 defineEmits<{
   (e: 'purchase'): void;
 }>();
+
+const handlePurchase = (item: Item) => {
+  console.log(`Purchasing item: ${item.name}`);
+};
 </script>

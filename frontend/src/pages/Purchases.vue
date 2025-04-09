@@ -14,17 +14,7 @@
 import { onMounted, ref } from "vue";
 import ItemCard from "@/components/ItemCard.vue";
 import { authState } from "@/auth";
-
-interface Purchase {
-    order_id: string;
-    item: {
-        id: number;
-        name: string;
-        description: string;
-        price: number;
-    };
-    timestamp: string;
-}
+import { Purchase } from "@/types";
 
 const purchases = ref<Purchase[]>([]);
 

@@ -28,13 +28,8 @@
 import ItemCard from "@/components/ItemCard.vue";
 import { onMounted, ref } from "vue";
 import { authState } from "@/auth";
+import { Item } from "@/types"
 
-interface Item {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-}
 
 const items = ref<Item[]>([]);
 const showPurchaseModal = ref(false);

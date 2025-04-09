@@ -3,10 +3,11 @@
     <h2 class="mb-6 text-2xl font-semibold text-primary-900 dark:text-primary-100">Your Purchases</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div v-if="purchases.length">
-        <div v-for="purchase in purchases" :key="purchase.id" 
-             class="rounded-lg border bg-primary-50 dark:bg-primary-900 dark:border-primary-700 p-4">
+        <div v-for="purchase in purchases" :key="purchase.id"
+          class="rounded-lg border bg-primary-50 dark:bg-primary-900 dark:border-primary-700 p-4">
           <h3 class="font-medium text-primary-900 dark:text-primary-100">{{ purchase.item_name }}</h3>
-          <time class="mt-2 block text-sm text-primary-500 dark:text-primary-400">{{ formatDate(purchase.timestamp) }}</time>
+          <time class="mt-2 block text-sm text-primary-500 dark:text-primary-400">{{ formatDate(purchase.timestamp)
+            }}</time>
         </div>
       </div>
       <div v-else class="col-span-full">
@@ -17,11 +18,7 @@
 </template>
 
 <script setup lang="ts">
-interface Purchase {
-  id: number;
-  item_name: string;
-  timestamp: string;
-}
+import { Purchase } from "@/types"
 
 defineProps<{
   purchases: Purchase[];

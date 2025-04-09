@@ -21,10 +21,7 @@
 </template>
 
 <script setup lang="ts">
-interface User {
-    id: string;
-    username: string;
-}
+import { User } from "@/types"
 
 defineProps<{
     users: User[];

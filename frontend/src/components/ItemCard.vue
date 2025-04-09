@@ -13,13 +13,7 @@
 
 <script setup lang="ts">
 import { computed, withDefaults } from "vue";
-
-interface Item {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-}
+import { Item } from "@/types"
 
 const props = withDefaults(
   defineProps<{

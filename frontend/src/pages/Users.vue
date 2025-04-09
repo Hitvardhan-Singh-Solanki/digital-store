@@ -89,12 +89,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import UserList from "../components/UserList.vue";
-import { login } from "../auth";
+import { login } from "@/auth";
+import { User } from "@/types"
 
-interface User {
-    id: string;
-    username: string;
-}
 
 const users = ref<User[]>([]);
 const isLoading = ref(true);

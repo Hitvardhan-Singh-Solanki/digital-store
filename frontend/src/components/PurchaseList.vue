@@ -12,11 +12,7 @@
 </template>
 
 <script setup lang="ts">
-interface Purchase {
-  id: number;
-  item_name: string;
-  timestamp: string;
-}
+import { Purchase } from "@/types"
 
 const props = defineProps<{ purchases: Purchase[] }>();
 

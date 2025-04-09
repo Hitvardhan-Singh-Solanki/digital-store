@@ -15,6 +15,7 @@
         <UserList v-if="!isLoading" :users="users" @deleteUser="openDeleteModal" @loginUser="showLoginModal = true" />
 
         <!-- Create User Modal -->
+        <!-- TODO: create a seperate component -->
         <div v-if="showCreateUserModal"
             class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
             <div class="bg-white p-6 rounded shadow-lg w-96">
@@ -41,6 +42,7 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
+        <!-- TODO: create a seperate component -->
         <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
             <div class="bg-white p-6 rounded shadow-lg w-96">
                 <h2 class="text-lg font-bold mb-4">Confirm Deletion</h2>
@@ -56,7 +58,8 @@
             </div>
         </div>
 
-
+        <!-- Login Modal -->
+        <!-- TODO: create a seperate component -->
         <div v-if="showLoginModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
             <div class="bg-white p-6 rounded shadow-lg w-96">
                 <h2 class="text-lg font-bold mb-4">Login</h2>

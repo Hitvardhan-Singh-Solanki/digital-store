@@ -16,7 +16,6 @@ const router = createRouter({
   routes,
 });
 
-// Add navigation guard
 router.beforeEach((to, from, next) => {
   if (!authState.isLoggedIn && to.path !== "/users") {
     alert("Please log in to access this page.");

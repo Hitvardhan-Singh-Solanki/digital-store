@@ -10,11 +10,23 @@ router = APIRouter(prefix="/api/purchases", tags=["purchases"])
 
 @router.get("/", response_model=List[PurchaseResponse])
 async def get_purchases(user_id: str = None, db: Session = Depends(get_db)):
-    if user_id:
-        purchases = db.query(Purchase).filter(Purchase.user_id == user_id).all()
-    else:
-        purchases = db.query(Purchase).all()
-    return purchases
+    if not user_id:
+        return []
+
+    purchases = db.query(Purchase).filter(Purchase.user_id == user_id).all()
+    purchase_responses = []
+    for purchase in purchases:
+        item = db.query(Item).filter(Item.id == purchase.item_id).first()
+        purchase_responses.append(
+            {
+                "id": purchase.id,
+                "user_id": purchase.user_id,
+                "item": item,
+                "timestamp": purchase.timestamp,
+                "order_id": purchase.order_id,
+            }
+        )
+    return purchase_responses
 
 
 @router.post("/", response_model=PurchaseResponse)
@@ -31,4 +43,11 @@ async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db
     db.add(new_purchase)
     db.commit()
     db.refresh(new_purchase)
-    return new_purchase
+
+    return {
+        "id": new_purchase.id,
+        "user_id": new_purchase.user_id,
+        "item": item,
+        "timestamp": new_purchase.timestamp,
+        "order_id": new_purchase.order_id,
+    }

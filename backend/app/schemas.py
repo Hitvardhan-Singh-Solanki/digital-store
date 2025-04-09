@@ -22,7 +22,7 @@ class ItemResponse(ItemBase):
 class PurchaseResponse(BaseModel):
     id: int
     user_id: str
-    item_id: int
+    item: ItemResponse
     timestamp: datetime
     order_id: str
 

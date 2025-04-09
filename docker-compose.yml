@@ -1,5 +1,3 @@
-version: '3.8'
-
 name: digital-store
 
 x-common: &common
@@ -9,12 +7,12 @@ x-common: &common
 services:
   redis:
     extends:
-      file: docker-compose.base.yml
+      file: ./docker-compose.base.yml
       service: redis
 
   postgres:
     extends:
-      file: docker-compose.base.yml
+      file:  ./docker-compose.base.yml
       service: postgres
 
   backend:

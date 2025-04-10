@@ -25,18 +25,15 @@ async def payment_webhook(
 ):
     body = await request.body()
 
-    # Extract signature from Authorization header
     if not authorization or not authorization.startswith("Signature "):
         raise HTTPException(status_code=401, detail="Missing signature")
 
     signature = authorization.split(" ")[1]
     secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
 
-    # Verify signature
     if not verify_signature(body, signature, secret):
         raise HTTPException(status_code=401, detail="Invalid signature")
 
-    # Parse and validate payload
     try:
         data = json.loads(body)
         if data.get("notification_type") != "payment":

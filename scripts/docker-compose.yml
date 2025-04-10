@@ -7,10 +7,12 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    ports:
+      - "8001:8001"
     networks:
-      - digital-store-network
+      - backend-network
+
 
 networks:
-  digital-store-network:
+  backend-network:
     external: true
-    name: digital-store_default

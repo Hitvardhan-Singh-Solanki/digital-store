@@ -35,6 +35,15 @@ services:
     networks:
       - backend-network
 
+  webhook-simulator:
+    extends: 
+      file: ./scripts/docker-compose.yml
+      service: webhook-simulator
+    depends_on:
+      - backend
+    networks:
+      - backend-network
+
 networks:
   backend-network:
     name: digital-store_default

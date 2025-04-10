@@ -10,4 +10,4 @@ COPY . /scripts
 
 ENV PYTHONPATH=/scripts
 
-CMD ["python", "simulate_webhook.py"]
+CMD ["uvicorn", "payment_intent_server:app", "--host", "0.0.0.0", "--port", "8001"]

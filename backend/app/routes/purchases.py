@@ -2,14 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 import uuid
+import logging
+from threading import Thread
 from models import Purchase, Item, User, PendingPurchase
 from schemas import PurchaseResponse, PurchaseCreate
 from database import get_db
+from payment.main import send_payment_intent
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/purchases", tags=["purchases"])
 
 
-@router.get("/", response_model=List[PurchaseResponse])
+@router.get("", response_model=List[PurchaseResponse])
 async def get_purchases(user_id: str = None, db: Session = Depends(get_db)):
     if not user_id:
         return []
@@ -30,7 +35,7 @@ async def get_purchases(user_id: str = None, db: Session = Depends(get_db)):
     return purchase_responses
 
 
-@router.post("/", response_model=PurchaseResponse)
+@router.post("", response_model=PurchaseResponse)
 async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == purchase.item_id).first()
     if not item:
@@ -45,6 +50,11 @@ async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db
     )
     db.add(pending_purchase)
     db.commit()
+
+    Thread(
+        target=send_payment_intent,
+        args=(pending_purchase.user_id, pending_purchase.item_id),
+    ).start()
 
     return {
         "id": 0,  # Temporary ID until webhook confirms

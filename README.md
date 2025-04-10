@@ -183,7 +183,7 @@ digital-store/
 
 ## Architecture flow
 
-![Mermaid](image-1.png)
+![Mermaid](image-2.png)
 
 ---
 

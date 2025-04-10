@@ -29,7 +29,7 @@ async def payment_webhook(
         raise HTTPException(status_code=401, detail="Missing signature")
 
     signature = authorization.split(" ")[1]
-    secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
+    secret = os.getenv("XSOLLA_WEBHOOK_SECRET")
 
     if not verify_signature(body, signature, secret):
         raise HTTPException(status_code=401, detail="Invalid signature")

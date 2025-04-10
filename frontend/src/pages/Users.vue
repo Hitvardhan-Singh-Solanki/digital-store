@@ -3,21 +3,21 @@
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Users</h1>
       <button
-        @click="showCreateUserModal = true"
         class="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        @click="showCreateUserModal = true"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5 mr-2"
           fill="none"
-          viewBox="0 0 24 24"
           stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            d="M12 4v16m8-8H4"
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M12 4v16m8-8H4"
           />
         </svg>
         Create a User
@@ -41,40 +41,40 @@
         <h2 class="text-lg font-bold mb-4">Create User</h2>
         <form @submit.prevent="createUser">
           <div class="mb-2">
-            <label for="username" class="block text-sm font-medium"
+            <label class="block text-sm font-medium" for="username"
               >Username</label
             >
             <input
-              v-model="newUser.username"
               id="username"
-              type="text"
+              v-model="newUser.username"
               class="w-full border border-gray-300 rounded px-2 py-1"
               required
+              type="text"
             />
           </div>
           <div class="mb-2">
-            <label for="password" class="block text-sm font-medium"
+            <label class="block text-sm font-medium" for="password"
               >Password</label
             >
             <input
-              v-model="newUser.password"
               id="password"
-              type="password"
+              v-model="newUser.password"
               class="w-full border border-gray-300 rounded px-2 py-1"
               required
+              type="password"
             />
           </div>
           <div class="flex justify-end gap-2">
             <button
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
               type="button"
               @click="closeCreateUserModal"
-              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               Cancel
             </button>
             <button
-              type="submit"
               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              type="submit"
             >
               Submit
             </button>
@@ -94,20 +94,20 @@
         <p class="mb-4">Enter your password to confirm deletion:</p>
         <input
           v-model="deletePassword"
-          type="password"
-          placeholder="Password"
           class="w-full border border-gray-300 rounded px-2 py-1 mb-4"
+          placeholder="Password"
+          type="password"
         />
         <div class="flex justify-end gap-2">
           <button
-            @click="closeDeleteModal"
             class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            @click="closeDeleteModal"
           >
             Cancel
           </button>
           <button
-            @click="confirmDelete"
             class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            @click="confirmDelete"
           >
             Delete
           </button>
@@ -125,40 +125,40 @@
         <h2 class="text-lg font-bold mb-4">Login</h2>
         <form @submit.prevent="loginUser">
           <div class="mb-2">
-            <label for="login-username" class="block text-sm font-medium"
+            <label class="block text-sm font-medium" for="login-username"
               >Username</label
             >
             <input
-              v-model="loginData.username"
               id="login-username"
-              type="text"
+              v-model="loginData.username"
               class="w-full border border-gray-300 rounded px-2 py-1"
               required
+              type="text"
             />
           </div>
           <div class="mb-2">
-            <label for="login-password" class="block text-sm font-medium"
+            <label class="block text-sm font-medium" for="login-password"
               >Password</label
             >
             <input
-              v-model="loginData.password"
               id="login-password"
-              type="password"
+              v-model="loginData.password"
               class="w-full border border-gray-300 rounded px-2 py-1"
               required
+              type="password"
             />
           </div>
           <div class="flex justify-end gap-2">
             <button
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
               type="button"
               @click="closeLoginModal"
-              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               Cancel
             </button>
             <button
-              type="submit"
               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              type="submit"
             >
               Login
             </button>
@@ -169,8 +169,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import UserList from '../components/UserList.vue';
 import { login } from '@/auth';
 import { User } from '@/types';
@@ -184,6 +185,8 @@ const deleteUserId = ref<string | null>(null);
 const deletePassword = ref('');
 const newUser = ref({ username: '', password: '' });
 const loginData = ref({ username: '', password: '' });
+
+const router = useRouter();
 
 onMounted(async () => {
   try {
@@ -281,9 +284,9 @@ const loginUser = async () => {
     }
 
     const data = await response.json();
-    console.log('Login successful:', data);
     login(data.user_id, loginData.value.username);
     closeLoginModal();
+    router.push('/items');
   } catch (error) {
     console.error(error);
     alert('Failed to log in. Please check your credentials.');

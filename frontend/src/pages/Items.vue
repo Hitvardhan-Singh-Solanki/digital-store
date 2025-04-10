@@ -82,7 +82,7 @@ const confirmPurchase = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         item_id: selectedItem.value.id,
-        user_id: authState.userId, // Include the logged-in user's ID
+        user_id: authState.userId,
       }),
     });
 
@@ -91,7 +91,9 @@ const confirmPurchase = async () => {
     }
 
     const data = await response.json();
-    alert(`Purchase of ${selectedItem.value.name} was successful!`);
+    alert(
+      `Purchase of ${selectedItem.value.name} was initiated we will let you know once the payment was successful!`,
+    );
     closePurchaseModal();
   } catch (error) {
     console.error(error);

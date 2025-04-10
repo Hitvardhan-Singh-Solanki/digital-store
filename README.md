@@ -1,6 +1,56 @@
 # Digital Game Store
 
-A full-stack application for a digital game store where users can browse items, make purchases, and view their purchase history. The backend handles API requests, webhook processing, and database management, while the frontend provides a user-friendly interface.
+A full-stack application for a digital game store where users can browse items, make purchases, and receive real-time purchase notifications. The backend handles API requests, secure webhook processing, and database management, while the frontend provides a modern, reactive user interface.
+
+---
+
+## Table of Contents
+
+- [Digital Game Store](#digital-game-store)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Architecture Overview](#architecture-overview)
+  - [Project Structure](#project-structure)
+  - [Setup \& Installation](#setup--installation)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+  - [Usage](#usage)
+  - [API Endpoints](#api-endpoints)
+    - [Authentication](#authentication)
+    - [Items](#items)
+    - [Purchases](#purchases)
+    - [Webhooks](#webhooks)
+    - [WebSocket](#websocket)
+  - [Testing](#testing)
+    - [Backend Tests](#backend-tests)
+    - [Frontend Testing](#frontend-testing)
+  - [Environment Variables](#environment-variables)
+    - [Backend (.env)](#backend-env)
+    - [Frontend](#frontend)
+  - [Troubleshooting](#troubleshooting)
+  - [Future Improvements](#future-improvements)
+  - [References](#references)
+
+---
+
+## Features
+
+- **User Management**: Register, login, and manage user accounts.
+- **Item Catalog**: Browse, search, and buy digital game items.
+- **Real-Time Notifications**: WebSocket-based notifications for successful purchases.
+- **Secure Payments and Webhooks**: HMAC-based webhook verification and asynchronous payment intent processing.
+- **Database Integration**: PostgreSQL for persistent data and SQLAlchemy ORM.
+- **Caching**: Redis caching to optimize item retrieval performance.
+
+---
+
+## Architecture Overview
+
+- **Backend:** Built with FastAPI. Implements RESTful endpoints, webhook processing, and WebSocket communication.
+- **Frontend:** Developed in Vue.js with Vite. Provides a reactive SPA with state management and routing.
+- **Payment Simulation:** A dedicated microservice that simulates third-party payment confirmations via webhooks.
+- **Data Storage:** PostgreSQL for relational data and Redis for caching.
+- **Containerization:** All services are containerized using Docker and coordinated with Docker Compose.
 
 ---
 
@@ -8,172 +58,177 @@ A full-stack application for a digital game store where users can browse items, 
 
 ```
 digital-store/
-├── backend/                # Backend application (FastAPI)
-│   ├── app/                # Application code
-│   │   ├── routes/         # API routes
-│   │   ├── models.py       # Database models
+├── backend/                
+│   ├── app/                
+│   │   ├── routes/         # API routes (items, purchases, users, webhooks)
+│   │   ├── models.py       # SQLAlchemy models
 │   │   ├── schemas.py      # Pydantic schemas
-│   │   ├── main.py         # FastAPI entry point
-│   │   ├── database.py     # Database configuration
+│   │   ├── main.py         # FastAPI application entry point
+│   │   ├── database.py     # Database configuration and Redis setup
 │   │   ├── state.py        # WebSocket state management
-│   ├── tests/              # Unit and integration tests
-│   ├── requirements.txt    # Python dependencies
-│   ├── Dockerfile          # Dockerfile for backend
-│   ├── docker-compose.yml  # Backend-specific Docker Compose
-├── frontend/               # Frontend application (Vue.js)
-│   ├── src/                # Application code
+│   │   └── payment/        # Payment module (async payment intent processing)
+│   ├── tests/              # Unit and integration tests for backend
+│   ├── requirements.txt    
+│   ├── Dockerfile          
+│   └── docker-compose.yml  
+├── frontend/               
+│   ├── src/                
 │   │   ├── components/     # Vue components
-│   │   ├── pages/          # Vue pages
+│   │   ├── pages/          # Page components
 │   │   ├── router.ts       # Vue Router configuration
-│   │   ├── main.ts         # Vue entry point
-│   ├── Dockerfile          # Dockerfile for frontend
-│   ├── docker-compose.yml  # Frontend-specific Docker Compose
-│   ├── package.json        # Node.js dependencies
-├── scripts/                # Utility scripts
-│   ├── simulate_webhook.py # Webhook simulation script
+│   │   ├── main.ts         # Vue application entry point
+│   ├── package.json        
+│   ├── Dockerfile          
+│   └── docker-compose.yml  
+├── scripts/                
+│   ├── simulate_webhook.py # Script to simulate payment webhooks
 │   ├── Dockerfile          # Dockerfile for webhook simulator
-├── docker-compose.yml      # Main Docker Compose file
+│   └── docker-compose.yml  # Docker Compose for webhook simulator
+├── docker-compose.yml      # Main Docker Compose file orchestrating all services
 ├── docker-compose.base.yml # Base services (Redis, Postgres)
-└── README.md               # Project documentation
+└── README.md               
 ```
 
 ---
 
-## Prerequisites
+## Setup & Installation
 
-- **Docker**: Ensure Docker is installed and running.
-- **Node.js**: Required for frontend development (Node.js 20+ recommended).
-- **Python**: Required for backend development (Python 3.9+ recommended).
+### Prerequisites
 
----
+- Docker and Docker Compose
+- Node.js 20+ (for frontend development)
+- Python 3.9+ (for backend development)
+- Git
 
-## How to Run the Project
+### Steps
 
-### 1. Clone the Repository
+1. **Clone the Repository**
 
-```bash
-git clone <repository-url>
-cd digital-store
-```
+   ```bash
+   git clone https://github.com/Hitvardhan-Singh-Solanki/digital-store
+   cd digital-store
+   ```
 
-### 2. Build and Start the Application
+2. **Configure Environment Variables**
 
-Run the following command to build and start all services:
+   Create a `.env` file in the `backend` folder with:
+   ```bash
+   DATABASE_URL=postgresql://postgres:postgres@postgres:5432/digital_store
+   REDIS_URL=redis://redis:6379/0
+   XSOLLA_WEBHOOK_SECRET=your_secure_secret_here
+   ```
 
-```bash
-docker-compose up --build
-```
+   Ensure the `scripts/.env` file contains:
+   ```bash
+   XSOLLA_WEBHOOK_SECRET=your_secure_secret_here
+   ```
 
-This will start the following services:
-- **Backend**: Accessible at `http://localhost:8000`
-- **Frontend**: Accessible at `http://localhost:5173`
-- **Redis**: Used for caching
-- **Postgres**: Used for database storage
-- **Webhook Simulator**: Simulates webhook requests
+3. **Build and Run the Application**
 
-### 3. Create Sample Items
+   ```bash
+   docker-compose up --build
+   ```
 
-Run the following command to populate the database with sample items:
+   This starts all services:
+   - **Backend** at `http://localhost:8000`
+   - **Frontend** at `http://localhost:5173`
+   - **Redis** and **Postgres**
+   - **Webhook Simulator** (sends simulated payment notifications)
 
-```bash
-docker-compose exec backend python app/scripts/create_example_items.py
-```
+4. **Populate Sample Data**
 
----
-
-## How to Test
-
-### 1. Backend Tests
-
-Run the backend tests using the following command:
-
-```bash
-docker-compose -f backend/docker-compose.test.yml up --build
-```
-
-This will execute all unit and integration tests for the backend.
-
-### 2. Frontend Development
-
-To run the frontend in development mode:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend will be available at `http://localhost:5173`.
+   ```bash
+   docker-compose exec backend python app/scripts/create_example_items.py
+   ```
 
 ---
 
-## Webhook Simulation
+## Usage
 
-The webhook simulator sends simulated payment notifications to the backend.
-
-### Steps to Run the Webhook Simulator
-
-1. Ensure the backend is running.
-2. Start the webhook simulator:
-
-```bash
-docker-compose -f scripts/docker-compose.webhook.yml up --build
-```
-
-The simulator will send webhook requests to the backend every 3 seconds.
+- **Access Frontend**: http://localhost:5173
+- **Access Backend API**: http://localhost:8000
+- **WebSocket Endpoint**: ws://localhost:8000/ws
 
 ---
 
 ## API Endpoints
 
-### Backend API
+### Authentication
+- **POST** `/api/users`: Create a new user.
+- **POST** `/api/users/login`: Login a user.
 
-- **GET /api/items**: Retrieve all available items.
-- **GET /api/purchases?user_id=<user_id>**: Retrieve purchases for a specific user.
-- **POST /api/webhooks/payment**: Handle payment confirmation webhooks.
+### Items
+- **GET** `/api/items`: Retrieve a list of available items.
+- **POST** `/api/items`: Create a new game item.
+
+### Purchases
+- **GET** `/api/purchases?user_id=<user_id>`: Retrieve purchases for a specific user.
+- **POST** `/api/purchases`: Initiate a purchase.
+
+### Webhooks
+- **POST** `/api/webhooks/payment`: Endpoint to receive payment confirmation webhooks.
 
 ### WebSocket
+- **WS** `/ws`: Receive real-time notification messages.
 
-- **ws://localhost:8000/ws**: WebSocket endpoint for real-time notifications.
+---
+
+## Testing
+
+### Backend Tests
+
+Run tests via Docker Compose:
+
+```bash
+docker-compose -f backend/docker-compose.test.yml up --build
+```
+
+### Frontend Testing
+
+For local frontend tests:
+
+```bash
+cd frontend
+npm run test
+```
 
 ---
 
 ## Environment Variables
 
-### Backend
-
-- `XSOLLA_WEBHOOK_SECRET`: Shared secret for webhook signature verification.
-- `DATABASE_URL`: Database connection string.
-- `REDIS_URL`: Redis connection string.
+### Backend (.env)
+- `DATABASE_URL`: PostgreSQL connection string.
+- `REDIS_URL`: Redis connection URL.
+- `XSOLLA_WEBHOOK_SECRET`: Secret used for HMAC webhook signature verification.
 
 ### Frontend
-
-- `CHOKIDAR_USEPOLLING`: Enables polling for file changes during development.
+- `CHOKIDAR_USEPOLLING`: Set to `true` to enable file polling for hot reloading during development.
 
 ---
 
 ## Troubleshooting
 
-### Common Issues
+- **Docker Build Issues**: Verify file paths and environment variable files.
+- **Database Connection**: Ensure the `DATABASE_URL` variable is correct.
+- **Webhook Signature Fails**: Confirm the `XSOLLA_WEBHOOK_SECRET` matches across backend and scripts.
+- **Clearing Cache**:
+  ```bash
+  docker-compose exec redis redis-cli FLUSHALL
+  ```
 
-1. **Docker Build Fails**:
-   - Ensure all paths in Dockerfiles are correct.
-   - Verify that required files (e.g., `requirements.txt`) exist in the build context.
-
-2. **Database Connection Issues**:
-   - Ensure the `DATABASE_URL` environment variable is correctly configured.
-   - Check if the Postgres service is running.
-
-3. **Webhook Signature Verification Fails**:
-   - Verify that the `XSOLLA_WEBHOOK_SECRET` matches between the backend and simulator.
+- **Rebuild Services**:
+  ```bash
+  docker-compose up --build --force-recreate
+  ```
 
 ---
 
 ## Future Improvements
 
-- Add pagination and filtering to API endpoints.
-- Enhance frontend UI/UX.
+- Add pagination and filters to API endpoints.
+- Enhance frontend UI/UX with more detailed product views and animations.
 - Implement CI/CD pipelines for automated testing and deployment.
+- Improve logging and monitoring across services.
 
 ---
 

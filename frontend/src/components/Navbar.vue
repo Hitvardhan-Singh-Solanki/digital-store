@@ -28,10 +28,10 @@
   </nav>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import Header from './Header.vue';
-import {authState, logout} from '../auth';
-import {useRouter} from 'vue-router';
+import { authState, logout } from '../auth';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 

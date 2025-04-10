@@ -183,3 +183,40 @@ The simulator will send webhook requests to the backend every 3 seconds.
 - [Vue.js Documentation](https://vuejs.org/)
 - [Docker Documentation](https://docs.docker.com/)
 - [Xsolla Webhooks](https://developers.xsolla.com/webhooks/overview/)
+
+---
+
+## Database Table Structure
+
+### Items Table
+| Column      | Type    | Description                     |
+|-------------|---------|---------------------------------|
+| `id`        | Integer | Primary key                    |
+| `name`      | String  | Name of the item               |
+| `description` | String | Description of the item        |
+| `price`     | Float   | Price of the item              |
+
+### Users Table
+| Column      | Type    | Description                     |
+|-------------|---------|---------------------------------|
+| `id`        | String  | Primary key (UUID)             |
+| `username`  | String  | Unique username                |
+| `password`  | String  | Hashed password                |
+
+### Purchases Table
+| Column      | Type    | Description                     |
+|-------------|---------|---------------------------------|
+| `id`        | Integer | Primary key                    |
+| `user_id`   | String  | Foreign key referencing `users` |
+| `item_id`   | Integer | Foreign key referencing `items` |
+| `timestamp` | DateTime| Timestamp of the purchase       |
+| `order_id`  | String  | Unique order identifier         |
+
+### Pending Purchases Table
+| Column      | Type    | Description                     |
+|-------------|---------|---------------------------------|
+| `id`        | Integer | Primary key                    |
+| `user_id`   | String  | Foreign key referencing `users` |
+| `item_id`   | Integer | Foreign key referencing `items` |
+| `timestamp` | DateTime| Timestamp of the pending purchase |
+| `order_id`  | String  | Unique order identifier         |

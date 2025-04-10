@@ -7,7 +7,6 @@ from time import sleep
 
 
 def simulate_webhook(user_id, item_id):
-    # Webhook payload
     payload = {
         "notification_type": "payment",
         "user": {"id": user_id},
@@ -23,20 +22,16 @@ def simulate_webhook(user_id, item_id):
         },
     }
 
-    # Convert payload to JSON string
     body = json.dumps(payload).encode()
 
-    # Calculate signature
     secret = os.getenv("XSOLLA_WEBHOOK_SECRET", "supersecret")
     signature = hmac.new(secret.encode(), body, hashlib.sha1).hexdigest()
 
-    # Send webhook request
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Signature {signature}",
     }
 
-    # Use backend service name instead of localhost
     response = requests.post(
         "http://backend:8000/api/webhooks/payment", data=body, headers=headers
     )

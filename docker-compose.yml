@@ -37,7 +37,7 @@ services:
 
 networks:
   backend-network:
-    name: backend-network
+    name: digital-store_default
 
 volumes:
   postgres_data:

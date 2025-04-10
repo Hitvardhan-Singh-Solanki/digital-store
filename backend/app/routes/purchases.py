@@ -2,14 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 import uuid
-import logging
 from threading import Thread
 from models import Purchase, Item, User, PendingPurchase
 from schemas import PurchaseResponse, PurchaseCreate
 from database import get_db
 from payment.main import send_payment_intent
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/purchases", tags=["purchases"])
 

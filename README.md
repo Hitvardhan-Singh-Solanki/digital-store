@@ -21,6 +21,8 @@ A full-stack application for a digital game store where users can browse items, 
     - [Purchases](#purchases)
     - [Webhooks](#webhooks)
     - [WebSocket](#websocket)
+  - [Database relations](#database-relations)
+  - [Architecture flow](#architecture-flow)
   - [Testing](#testing)
     - [Backend Tests](#backend-tests)
     - [Frontend Testing](#frontend-testing)
@@ -170,6 +172,18 @@ digital-store/
 
 ### WebSocket
 - **WS** `/ws`: Receive real-time notification messages.
+
+---
+
+## Database relations
+
+![Mermaid](image.png)
+
+---
+
+## Architecture flow
+
+![Mermaid](image-1.png)
 
 ---
 

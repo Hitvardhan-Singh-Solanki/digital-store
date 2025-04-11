@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
 import json
-from models import Item
-from schemas import ItemResponse, ItemCreate
-from database import get_db, redis_client
+from api.v1.schemas import ItemResponse, ItemCreate
+from models.items import Item
+from db.session import get_db
+from db.redis import redis_client
 
 router = APIRouter(prefix="/api/items", tags=["items"])
 
@@ -25,7 +26,7 @@ async def get_items(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ItemResponse)
 async def create_item(item: ItemCreate, db: Session = Depends(get_db)):
-    db_item = Item(**item.dict())
+    db_item = Item(**item.model_dump())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

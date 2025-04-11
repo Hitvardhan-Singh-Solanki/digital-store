@@ -1,7 +1,8 @@
 import httpx
 import logging
-from database import SessionLocal
-from models import PendingPurchase
+from db.session import SessionLocal
+
+from models.pending_purchases import PendingPurchase
 
 logger = logging.getLogger(__name__)
 

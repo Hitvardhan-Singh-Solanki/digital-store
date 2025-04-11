@@ -20,6 +20,7 @@ import { onMounted, ref } from 'vue';
 import ItemCard from '@/components/ItemCard.vue';
 import { authState } from '@/auth';
 import { Purchase } from '@/types';
+import { appConfig } from '../../app.config';
 
 const purchases = ref<Purchase[]>([]);
 
@@ -31,7 +32,7 @@ onMounted(async () => {
 
   try {
     const purchasesRes = await fetch(
-      `http://localhost:8000/api/purchases?user_id=${authState.userId}`,
+      `${appConfig().backend}/purchases?user_id=${authState.userId}`,
     );
     if (!purchasesRes.ok) {
       throw new Error('Failed to fetch purchases');

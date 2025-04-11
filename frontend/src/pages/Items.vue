@@ -47,6 +47,7 @@
 
 <script setup lang="ts">
 import ItemCard from '@/components/ItemCard.vue';
+import { appConfig } from '../../app.config';
 import { onMounted, ref } from 'vue';
 import { authState } from '@/auth';
 import { Item } from '@/types';
@@ -56,7 +57,7 @@ const showPurchaseModal = ref(false);
 const selectedItem = ref<Item | null>(null);
 
 onMounted(async () => {
-  const itemsRes = await fetch('http://localhost:8000/api/items');
+  const itemsRes = await fetch(`${appConfig().backend}/items`);
   items.value = await itemsRes.json();
 });
 
@@ -77,7 +78,7 @@ const confirmPurchase = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/api/purchases', {
+    const response = await fetch(`${appConfig().backend}/purchases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

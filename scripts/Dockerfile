@@ -10,4 +10,4 @@ COPY . /scripts
 
 ENV PYTHONPATH=/scripts
 
-CMD ["uvicorn", "payment_intent_server:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "payment_intent_server:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]

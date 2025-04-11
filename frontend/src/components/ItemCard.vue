@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, withDefaults } from 'vue';
+import { computed } from 'vue';
 import { Item } from '@/types';
 
 const props = withDefaults(
@@ -35,7 +35,7 @@ const props = withDefaults(
     purchaseDate?: string | null;
   }>(),
   {
-    purchaseDate: null, // Default value for purchaseDate
+    purchaseDate: null,
   },
 );
 
@@ -48,8 +48,8 @@ const handlePurchase = (item: Item) => {
 };
 
 const formattedPurchaseDate = computed(() => {
-  if (!props.purchaseDate) return 'N/A'; // Default display if no purchase date is provided
-  const date = new Date(props.purchaseDate); // Convert string to Date object
+  if (!props.purchaseDate) return 'N/A';
+  const date = new Date(props.purchaseDate);
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',

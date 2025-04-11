@@ -175,6 +175,7 @@ import { useRouter } from 'vue-router';
 import UserList from '../components/UserList.vue';
 import { login } from '@/auth';
 import { User } from '@/types';
+import { appConfig } from '../../app.config';
 
 const users = ref<User[]>([]);
 const isLoading = ref(true);
@@ -190,7 +191,7 @@ const router = useRouter();
 
 onMounted(async () => {
   try {
-    const usersRes = await fetch('http://localhost:8000/api/users');
+    const usersRes = await fetch(`${appConfig().backend}/users`);
     if (!usersRes.ok) {
       throw new Error(`HTTP error! status: ${usersRes.status}`);
     }
@@ -205,7 +206,7 @@ onMounted(async () => {
 
 const createUser = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/users', {
+    const response = await fetch(`${appConfig().backend}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser.value),
@@ -251,7 +252,7 @@ const confirmDelete = async () => {
 
   try {
     const response = await fetch(
-      `http://localhost:8000/api/users/${deleteUserId.value}`,
+      `${appConfig().backend}/users/${deleteUserId.value}`,
       {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -273,7 +274,7 @@ const confirmDelete = async () => {
 
 const loginUser = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/users/login', {
+    const response = await fetch(`${appConfig().backend}/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(loginData.value).toString(),

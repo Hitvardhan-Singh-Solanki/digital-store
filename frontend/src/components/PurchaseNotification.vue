@@ -20,7 +20,7 @@
       <div>
         <h4 class="font-bold">Purchase Successful!</h4>
         <p class="text-sm">
-          {{ notification.items.map((item) => item.name).join(', ') }}
+          {{ notification.items.map((item: Item) => item.name).join(', ') }}
         </p>
       </div>
     </div>
@@ -29,8 +29,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { authState } from '../auth';
-
+import { authState } from '@/auth';
+import { appConfig } from '../../app.config';
+import { Item } from '@/types';
 const notification = ref<any>(null);
 let ws: WebSocket;
 
@@ -43,7 +44,7 @@ onUnmounted(() => {
 });
 
 function connectWebSocket() {
-  ws = new WebSocket('ws://localhost:8000/ws');
+  ws = new WebSocket(`${appConfig().backendWS}`);
 
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);

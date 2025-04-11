@@ -3,9 +3,14 @@ from sqlalchemy.orm import Session
 from typing import List
 import uuid
 import asyncio
-from models import Purchase, Item, User, PendingPurchase
-from schemas import PurchaseResponse, PurchaseCreate
-from database import get_db
+from api.v1.schemas import PurchaseResponse, PurchaseCreate
+from models.items import Item
+from models.purchases import Purchase
+from models.users import User
+
+from models.pending_purchases import PendingPurchase
+
+from db.session import get_db
 from payment.main import send_payment_intent
 
 router = APIRouter(prefix="/api/purchases", tags=["purchases"])

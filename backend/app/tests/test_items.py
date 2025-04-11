@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import json
 from main import app
 from models import Item
-from database import redis_client
+from db.redis import redis_client
 
 client = TestClient(app)
 

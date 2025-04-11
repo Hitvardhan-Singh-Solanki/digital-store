@@ -5,7 +5,7 @@ import os
 # Add the parent directory to the Python path so we can import our app modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database import SessionLocal
+from db.session import SessionLocal
 from models import Item
 
 

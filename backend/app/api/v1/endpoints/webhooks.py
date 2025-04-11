@@ -5,8 +5,10 @@ import hmac
 import hashlib
 import os
 
-from models import Purchase, Item, PendingPurchase
-from database import get_db
+from models.purchases import Purchase
+from models.pending_purchases import PendingPurchase
+from models.items import Item
+from db.session import get_db
 from state import connected_clients
 
 router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])

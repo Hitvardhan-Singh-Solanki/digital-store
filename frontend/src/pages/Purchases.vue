@@ -16,11 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import ItemCard from '@/components/ItemCard.vue';
-import { authState } from '@/auth';
+
+import ItemCard from '@/components/ItemCard.vue';import { authState } from '@/auth';
 import { Purchase } from '@/types';
 import { appConfig } from '../../app.config';
+import {onMounted, ref} from "vue";
 
 const purchases = ref<Purchase[]>([]);
 

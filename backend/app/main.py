@@ -13,7 +13,7 @@ app = FastAPI(title="Digital Game Store API")
 # Add CORS middleware for security
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

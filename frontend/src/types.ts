@@ -15,3 +15,8 @@ export interface Item {
   description: string;
   price: number;
 }
+
+export interface LoginData {
+    username: string;
+    password: string;
+}

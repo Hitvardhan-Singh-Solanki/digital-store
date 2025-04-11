@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import uuid
 import asyncio
-from api.v1.schemas import PurchaseResponse, PurchaseCreate
+from api.v1.schemas.purchase import PurchaseResponse, PurchaseCreate
 from models.items import Item
 from models.purchases import Purchase
 from models.users import User

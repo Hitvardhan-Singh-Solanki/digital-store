@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
 import json
-from api.v1.schemas import ItemResponse, ItemCreate
+from api.v1.schemas.item import ItemResponse, ItemCreate
 from models.items import Item
 from db.session import get_db
 from db.redis import redis_client

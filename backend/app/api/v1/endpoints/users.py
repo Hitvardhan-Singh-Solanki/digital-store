@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from api.v1.schemas import UserCreate, UserDeleteRequest, UserResponse
+from api.v1.schemas.user import UserCreate, UserDeleteRequest, UserResponse
 from models.users import User
 from db.session import get_db
 from fastapi.security import OAuth2PasswordRequestForm

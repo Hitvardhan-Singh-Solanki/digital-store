@@ -17,18 +17,19 @@
     <create-user-modal :show-create-user-modal="showCreateUserModal" @create-user="createUser"
       @closeCreateUserModal="closeCreateUserModal" />
 
-    <delete-user-confirmation-modal :show-delete-modal="showDeleteModal" @close-delete-modal="closeDeleteModal" @confirm-delete="confirmDelete" />
+    <delete-user-confirmation-modal :show-delete-modal="showDeleteModal" @close-delete-modal="closeDeleteModal"
+      @confirm-delete="confirmDelete" />
 
     <login-user-modal :show-login-modal="showLoginModal" @login="loginUser" @close-login-modal="closeLoginModal" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {onMounted, Ref, ref} from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import UserList from '../components/UserList.vue';
 import { login } from '@/auth';
-import {LoginData, User} from '@/types';
+import { LoginData, User } from '@/types';
 import { appConfig } from '../../app.config';
 import CreateUserModal from "@/components/modals/CreateUserModal.vue";
 import DeleteUserConfirmationModal from "@/components/modals/DeleteUserConfirmationModal.vue";
@@ -97,8 +98,6 @@ const closeLoginModal = () => {
 };
 
 const confirmDelete = async (deletePassword: Ref<string>) => {
-  console.log('confirm', deletePassword);
-  console.log(deleteUserId);
   if (!deleteUserId.value || !deletePassword.value) return;
 
   try {

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 import uuid
-from threading import Thread
+import asyncio
 from models import Purchase, Item, User, PendingPurchase
 from schemas import PurchaseResponse, PurchaseCreate
 from database import get_db
@@ -47,11 +47,16 @@ async def create_purchase(purchase: PurchaseCreate, db: Session = Depends(get_db
     )
     db.add(pending_purchase)
     db.commit()
+    db.refresh(pending_purchase)
 
-    Thread(
-        target=send_payment_intent,
-        args=(pending_purchase.user_id, pending_purchase.item_id),
-    ).start()
+    asyncio.create_task(
+        send_payment_intent(
+            pending_purchase.user_id,
+            pending_purchase.item_id,
+            pending_purchase.order_id,
+            item.price,
+        )
+    )
 
     return {
         "id": 0,  # Temporary ID until webhook confirms

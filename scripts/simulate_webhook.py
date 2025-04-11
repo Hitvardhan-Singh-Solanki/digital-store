@@ -10,20 +10,13 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def simulate_webhook(user_id: str, item_id: int):
+def simulate_webhook(user_id: str, item_id: int, amount: float):
     logger.info(f"Starting webhook simulation for user {user_id}, item {item_id}")
     payload = {
         "notification_type": "payment",
         "user": {"id": user_id},
         "purchase": {
-            "virtual_items": {
-                "items": [
-                    {
-                        "sku": str(item_id),
-                        "amount": 1,
-                    }
-                ]
-            }
+            "virtual_items": {"items": [{"sku": str(item_id), "amount": amount}]}
         },
     }
 

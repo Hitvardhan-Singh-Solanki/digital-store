@@ -14,13 +14,14 @@ app = FastAPI()
 class PaymentIntent(BaseModel):
     user_id: str
     item_id: int
+    amount: float
 
 
-@app.post("/register-payment-intent/")
+@app.post("/register-payment-intent")
 def register_payment_intent(intent: PaymentIntent):
     logger.info(f"Received payment intent: {intent}")
     try:
-        simulate_webhook(intent.user_id, intent.item_id)
+        simulate_webhook(intent.user_id, intent.item_id, intent.amount)
         logger.info("Webhook simulation completed successfully")
         return {"status": "success"}
     except Exception as e:

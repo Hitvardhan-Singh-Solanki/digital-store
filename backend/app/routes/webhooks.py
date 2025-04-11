@@ -41,6 +41,7 @@ async def payment_webhook(
 
         user_id = data.get("user", {}).get("id")
         items = data.get("purchase", {}).get("virtual_items", {}).get("items", [])
+        order_id = data.get("order_id")
 
         if not user_id or not items:
             raise HTTPException(status_code=400, detail="Missing required fields")
